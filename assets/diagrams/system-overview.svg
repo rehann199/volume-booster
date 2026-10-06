@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" role="img" aria-labelledby="t d">
+  <title id="t">Volume Booster system overview</title>
+  <desc id="d">A shared Flutter layer talks over platform channels to two different native audio implementations: Android audio effects on the global output session with a foreground service, and an iOS AVAudioEngine graph that processes only the in-app player. Shared services cover ads, analytics, billing and local storage.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050d24"/>
+      <stop offset="1" stop-color="#0a1a3a"/>
+    </linearGradient>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#5eead4"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; fill: #e8f1ff; }
+      .h { font-size: 26px; font-weight: 700; }
+      .k { font-size: 13px; fill: #5eead4; letter-spacing: 1.5px; font-weight: 700; }
+      .b { font-size: 15px; font-weight: 600; }
+      .s { font-size: 12.5px; fill: #a9bdd9; }
+      .box { fill: #0f2247; stroke: #2b4a80; stroke-width: 1.5; }
+      .and { fill: #0d2a2a; stroke: #2fae7f; stroke-width: 1.5; }
+      .ios { fill: #1a1f3f; stroke: #7c8cf0; stroke-width: 1.5; }
+      .sh { fill: #0c1c3c; stroke: #2b4a80; stroke-width: 1.2; stroke-dasharray: 5 4; }
+      .ln { stroke: #5eead4; stroke-width: 1.8; fill: none; }
+      .note { fill: #1c1a10; stroke: #b8923a; stroke-width: 1.2; }
+      .nt { font-size: 12.5px; fill: #f0d79a; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="660" rx="18" fill="url(#bg)"/>
+  <text x="40" y="52" class="h">Volume Booster: one Flutter app, two different audio engines</text>
+  <text x="40" y="78" class="s">Shared UI and state in Dart; the audio work itself is native and differs by platform.</text>
+
+  <!-- Flutter layer -->
+  <rect x="40" y="105" width="1120" height="150" rx="14" class="box"/>
+  <text x="62" y="132" class="k">FLUTTER / DART (SHARED)</text>
+  <rect x="62" y="146" width="200" height="86" rx="10" class="sh"/>
+  <text x="76" y="172" class="b">Screens</text>
+  <text x="76" y="192" class="s">Boost dial, equalizer,</text>
+  <text x="76" y="209" class="s">songs, playlists, settings</text>
+  <rect x="282" y="146" width="230" height="86" rx="10" class="sh"/>
+  <text x="296" y="172" class="b">Controllers (provider)</text>
+  <text x="296" y="192" class="s">Volume, equalizer, player,</text>
+  <text x="296" y="209" class="s">edge lighting, subscription</text>
+  <rect x="532" y="146" width="250" height="86" rx="10" class="sh"/>
+  <text x="546" y="172" class="b">Audio engine facade</text>
+  <text x="546" y="192" class="s">10-band curve resampled to the</text>
+  <text x="546" y="209" class="s">device bands; gain compensation</text>
+  <rect x="802" y="146" width="170" height="86" rx="10" class="sh"/>
+  <text x="816" y="172" class="b">Player</text>
+  <text x="816" y="192" class="s">just_audio on Android,</text>
+  <text x="816" y="209" class="s">native player on iOS</text>
+  <rect x="992" y="146" width="146" height="86" rx="10" class="sh"/>
+  <text x="1006" y="172" class="b">Local store</text>
+  <text x="1006" y="192" class="s">shared_preferences</text>
+  <text x="1006" y="209" class="s">+ native mirror</text>
+
+  <!-- channels -->
+  <line x1="300" y1="255" x2="300" y2="318" class="ln" marker-end="url(#ar)"/>
+  <line x1="900" y1="255" x2="900" y2="318" class="ln" marker-end="url(#ar)"/>
+  <text x="318" y="292" class="s">Channels: audio_engine, media_control,</text>
+  <text x="318" y="308" class="s">edge_lighting, device_audio</text>
+  <text x="918" y="298" class="s">Channels: audio_engine, ios_player</text>
+
+  <!-- Android -->
+  <rect x="40" y="322" width="560" height="214" rx="14" class="and"/>
+  <text x="62" y="350" class="k">ANDROID (KOTLIN)</text>
+  <text x="62" y="376" class="b">AudioEffectEngine on global output session 0</text>
+  <text x="62" y="396" class="s">android.media.audiofx: Equalizer, BassBoost, Virtualizer, LoudnessEnhancer</text>
+  <text x="62" y="416" class="s">Capability probe per device; state mirrored to native SharedPreferences</text>
+  <text x="62" y="442" class="b">Foreground service (mediaPlayback)</text>
+  <text x="62" y="462" class="s">Keeps effects alive after the UI closes; Stop action; restore after a kill</text>
+  <text x="62" y="488" class="b">Media sessions + Edge Lighting overlay</text>
+  <text x="62" y="508" class="s">MediaSessionManager reads and controls other apps' sessions</text>
+  <text x="62" y="524" class="s">(Notification access). Visualizer level drives an overlay window</text>
+
+  <!-- iOS -->
+  <rect x="620" y="322" width="540" height="214" rx="14" class="ios"/>
+  <text x="642" y="350" class="k">iOS (SWIFT)</text>
+  <text x="642" y="376" class="b">AVAudioEngine graph for the in-app player only</text>
+  <text x="642" y="396" class="s">AVAudioPlayerNode, AVAudioUnitEQ (10 bands + low shelf), reverb, main mixer</text>
+  <text x="642" y="416" class="s">Bass = low shelf; virtualizer approximated by reverb; loudness = mixer gain</text>
+  <text x="642" y="442" class="b">AVAudioSession (.playback)</text>
+  <text x="642" y="462" class="s">Background audio mode, interruption and route-change handling, engine restart</text>
+  <text x="642" y="488" class="b">Not available on iOS</text>
+  <text x="642" y="508" class="s">Effects on other apps' audio, other apps' media control, overlay lighting,</text>
+  <text x="642" y="524" class="s">device-wide song library scan</text>
+
+  <!-- shared services -->
+  <rect x="40" y="556" width="1120" height="84" rx="14" class="box"/>
+  <text x="62" y="582" class="k">SHARED SERVICES (BOTH PLATFORMS)</text>
+  <text x="62" y="606" class="s">Ads: mediation SDK, placements gated by remote config that fails closed</text>
+  <text x="62" y="624" class="s">Billing: in_app_purchase, monthly and yearly Pro (removes ads)</text>
+  <text x="640" y="606" class="s">Analytics: validated event facade, Crashlytics non-fatals, Performance traces</text>
+  <text x="640" y="624" class="s">Messaging, in-app update prompt, 10 interface languages</text>
+</svg>
